@@ -1,0 +1,42 @@
+{
+  "seed": 42,
+  "sample_rate": 16000,
+  "clip_seconds": 4.0,
+  "n_fft": 400,
+  "hop_length": 160,
+  "n_mels": 64,
+  "n_mfcc": 40,
+  "fmin": 20,
+  "fmax": 7600,
+  "feature_version": 2,
+  "data_root": "data/raw/ASVspoof2019_LA",
+  "manifest": "data/processed/manifest.csv",
+  "feature_cache": "data/cache/features",
+  "artifacts": "artifacts",
+  "reports": "reports/generated",
+  "cnn": {
+    "epochs": 25,
+    "batch_size": 32,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "patience": 6,
+    "num_workers": 2,
+    "eval_batch_size": 128,
+    "gradient_clip_norm": 1.0
+  },
+  "augmentation": {
+    "enabled": true,
+    "noise_probability": 0.5,
+    "noise_snr_min_db": 5.0,
+    "noise_snr_max_db": 20.0,
+    "gain_db": 6.0,
+    "frequency_mask_bands": 8,
+    "frequency_masks": 2,
+    "time_mask_frames": 30,
+    "time_masks": 2
+  },
+  "baseline": {
+    "max_iter": 1000,
+    "c": 1.0
+  }
+}

@@ -1,0 +1,76 @@
+RUN THE AUDIO CHECKER (WINDOWS)
+================================
+
+This guide starts the Streamlit page on your own computer. It is not a hosted
+website. The browser connects to the app running locally on your PC.
+
+IMPORTANT: the GitHub repository does not contain the ASVspoof audio dataset or
+trained model files. A new user needs authorized access to ASVspoof 2019 LA and
+must train the model on their computer before the CNN option will work. Training
+can take a while, especially on a CPU.
+
+1. Install Python 3.10 or newer and GitHub Desktop (or Git).
+2. Clone/download this repository and open its folder in PowerShell.
+   In GitHub Desktop, use Repository > Show in Explorer, then open PowerShell
+   in the Deepfake-Audio-Detection folder.
+3. Quick update: before running the app, create the project's virtual
+   environment and install its packages. In PowerShell, from the project
+   folder, paste these commands one at a time and let each finish:
+
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1
+   python -m pip install --upgrade pip
+   pip install -r requirements.txt
+
+   If PowerShell blocks environment activation, run this once in that window,
+   then activate again:
+
+   Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+   .\.venv\Scripts\Activate.ps1
+
+4. Get ASVspoof 2019 Logical Access (LA) by following the official access and
+   license instructions at https://www.asvspoof.org/index2019.html. Extract it
+   so the project contains:
+
+   data\raw\ASVspoof2019_LA\ASVspoof2019_LA_cm_protocols\
+   data\raw\ASVspoof2019_LA\ASVspoof2019_LA_train\flac\
+   data\raw\ASVspoof2019_LA\ASVspoof2019_LA_dev\flac\
+   data\raw\ASVspoof2019_LA\ASVspoof2019_LA_eval\flac\
+
+   The protocol files should be inside ASVspoof2019_LA_cm_protocols. Some
+   releases do not include the evaluation labels needed by this project's
+   final evaluation scripts. If labels are missing, obtain the authorized key
+   file or use a separately labeled held-out set; do not guess the labels.
+   If your folders are elsewhere, update data_root in configs\default.json.
+
+5. Build and validate the manifest:
+
+   python -m src.data.prepare_manifest
+   python -m src.data.validate_manifest
+
+6. Train the CNN. This creates the checkpoint and metadata that the app needs:
+
+   python -m src.train_cnn
+
+   The model files are saved under artifacts\logmel_cnn\. To use the MFCC
+   baseline option in the app as well, train it too:
+
+   python -m src.train_baseline
+
+7. Start the app from the project folder. This command uses the project's
+   virtual environment directly, so PowerShell does not need to find a
+   separate `streamlit` command on PATH:
+
+   .\.venv\Scripts\python.exe -m streamlit run app.py
+
+   Streamlit should open a browser tab. If it does not, copy the Local URL
+   shown in PowerShell (usually http://localhost:8501) into your browser.
+
+8. Choose Log-Mel CNN, upload a WAV, FLAC, MP3, OGG, or M4A file, and click
+   Analyze audio. Keep the PowerShell window open while using the app. Press
+   Ctrl+C in that window to stop it.
+
+The displayed score is an experimental model score, not a calibrated
+probability or proof that a recording is fake. The app processes uploads on
+the same computer where it is running; this code does not send them to a
+hosted service.
